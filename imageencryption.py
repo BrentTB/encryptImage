@@ -13,6 +13,8 @@ pngPath = 'ImageEncryption/Images/'
 
 baseUse = 3 # make it that it can change how many pixels are used, the smaller, the closer to the origional but less text can be held
 
+def charToInt(char):
+    return ord(char)-ord('0')
 
 def decimalToTern(decimal, length):
     numTer = str(np.base_repr(decimal,base=3))
@@ -40,7 +42,6 @@ def decryptPoly(ciphertext, key):
             num= num - shift
             newStr += chr(num)
         index = (index+1)%len(key)
-
     return newStr
 
 def encryptPoly(plaintext, key):
@@ -56,13 +57,11 @@ def encryptPoly(plaintext, key):
             num= ord(letter) + shift
             newStr.append(decimalToTern(num,5))
         index = (index+1)%len(key)
-
     return newStr
 
 def encryptImage(image_name, text, newName):
 
-    keys = []
-    ternary=[]
+    keys,ternary = [],[]
 
     for i in range(8):
         num = random.randint(0,26)
@@ -73,38 +72,33 @@ def encryptImage(image_name, text, newName):
     width, height = im.size
     pixelTmp = np.asarray(im).copy()
 
-    if len(text) > width*height/2 - 5:
-        print('The text is too large. Please plit it into multiple pieces or choose a smaller text')
+    if len(text) > width*height/2 - 7:
+        print('The text is too large. Please split it into multiple pieces or choose a smaller text')
 
     ciphertext = encryptPoly(text,keys)
-    index = 0
+    
+    index, inMiddle, done = 0, False, False
 
-    inMiddle=False
-    done=False
     for y in range(height):
         for x in range(width):
 
             # 255 is divisible by 3, so if it is 255, it would break when adding 1 or 2
-            pixelTmp[y,x][0] = 254 if  pixelTmp[y,x][0]==255 else pixelTmp[y,x][0]
-            pixelTmp[y,x][1] = 254 if  pixelTmp[y,x][1]==255 else pixelTmp[y,x][1]
-            pixelTmp[y,x][2] = 254 if  pixelTmp[y,x][2]==255 else pixelTmp[y,x][2]
+            for i in range(3):
+                pixelTmp[y,x][i] = 254 if pixelTmp[y,x][i]==255 else pixelTmp[y,x][i]
 
             # adding keys to the image
             if (y==0 and x<8):
 
-                pixelTmp[y,x][0] = pixelTmp[y,x][0] - pixelTmp[y,x][0]%3 + (ord(ternary[x][0])-ord('0'))
-                pixelTmp[y,x][1] = pixelTmp[y,x][1] - pixelTmp[y,x][1]%3 + (ord(ternary[x][1])-ord('0'))
-                pixelTmp[y,x][2] = pixelTmp[y,x][2] - pixelTmp[y,x][2]%3 + (ord(ternary[x][2])-ord('0'))
+                for i in range(3):
+                    pixelTmp[y,x][i] = pixelTmp[y,x][i] - pixelTmp[y,x][i]%3 + charToInt(ternary[x][i])
 
                 continue
-                
             
             if done and not inMiddle:
                 # randomise all 3 pixels
 
-                pixelTmp[y,x][0]-=pixelTmp[y,x][0]%3-random.randint(0,2)
-                pixelTmp[y,x][1]-=pixelTmp[y,x][1]%3-random.randint(0,2)
-                pixelTmp[y,x][2]-=pixelTmp[y,x][2]%3-random.randint(0,2)
+                for i in range(3):
+                    pixelTmp[y,x][i]-=pixelTmp[y,x][i]%3-random.randint(0,2)
 
                 continue
 
@@ -117,14 +111,13 @@ def encryptImage(image_name, text, newName):
                 else:
                     pixelTmp[y,x][0]-=pixelTmp[y,x][0]%3 - random.randint(0,1)
 
-                pixelTmp[y,x][1]-=pixelTmp[y,x][1]%3 - (ord(ciphertext[index][0])-ord('0'))
-                pixelTmp[y,x][2]-=pixelTmp[y,x][2]%3 - (ord(ciphertext[index][1])-ord('0'))
+                for i in range(2):
+                    pixelTmp[y,x][i+1]-=pixelTmp[y,x][i+1]%3 - charToInt(ciphertext[index][i])
 
             else:
 
-                pixelTmp[y,x][0]-=pixelTmp[y,x][0]%3 - (ord(ciphertext[index][2])-ord('0'))
-                pixelTmp[y,x][1]-=pixelTmp[y,x][1]%3 - (ord(ciphertext[index][3])-ord('0'))
-                pixelTmp[y,x][2]-=pixelTmp[y,x][2]%3 - (ord(ciphertext[index][4])-ord('0'))
+                for i in range(3):
+                    pixelTmp[y,x][i]-=pixelTmp[y,x][i]%3 - charToInt(ciphertext[index][i+2])
 
                 index+=1
 
@@ -179,8 +172,6 @@ def decryptImage(image_name):
 
     return decryptPoly(ciphertext,keys)
 
-
-
 if __name__ == '__main__':
 
     with open(txtPath+'Harry_Potter_1.txt', 'r') as file:
@@ -196,6 +187,7 @@ if __name__ == '__main__':
 
     encryptImage(image_name, text, newName)
     print(decryptImage(newName)[:200]) # print the first 200 charaters of the text
+
 
     # digit 1:
     # 0 -> randomly chosen. This could carry more info
