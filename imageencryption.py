@@ -188,22 +188,16 @@ if __name__ == '__main__':
         text = file.read()
     image_name='earth.jpg'
 
-
     # text='Hi'
     # image_name = 'gradient.png'
 
+    newName = pngPath+('encrypt-'+image_name).replace('.jpg','.png') # jpg's dont work, so I convert everything to png
+    image_name = pngPath+image_name
 
-    newName = ('encrypt-'+image_name).replace('.jpg','.png') # jpg's dont work, so I convert everything to png
-    encryptImage(pngPath+image_name, text, pngPath+newName)
-
-    print(decryptImage(pngPath+newName)[:200]) # print the first 200 charaters of the text
-
-
+    encryptImage(image_name, text, newName)
+    print(decryptImage(newName)[:200]) # print the first 200 charaters of the text
 
     # digit 1:
     # 0 -> randomly chosen. This could carry more info
     # 1 -> 
     # 2 -> this pixel is the end of message
-
-    # first 8 pixels, 4 pixels per key, and each key has 4 numbers for each pixel
-
