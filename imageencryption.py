@@ -8,7 +8,8 @@ blue = [0,0,255]
 white = [255,255,255]
 black = [0,0,0]
 
-path = 'ImageEncryption/'
+txtPath = 'ImageEncryption/Text/'
+pngPath = 'ImageEncryption/Images/'
 
 baseUse = 3 # make it that it can change how many pixels are used, the smaller, the closer to the origional but less text can be held
 
@@ -182,7 +183,7 @@ def decryptImage(image_name):
 
 if __name__ == '__main__':
 
-    with open(path+'Harry_Potter_1.txt', 'r') as file:
+    with open(txtPath+'Harry_Potter_1.txt', 'r') as file:
     # Read in the contents of the file
         text = file.read()
     image_name='earth.jpg'
@@ -193,9 +194,9 @@ if __name__ == '__main__':
 
 
     newName = ('encrypt-'+image_name).replace('.jpg','.png') # jpg's dont work, so I convert everything to png
-    encryptImage(path+image_name, text, path+newName)
+    encryptImage(pngPath+image_name, text, pngPath+newName)
 
-    print(decryptImage(path+newName)[:200]) # print the first 200 charaters of the text
+    print(decryptImage(pngPath+newName)[:200]) # print the first 200 charaters of the text
 
 
 
