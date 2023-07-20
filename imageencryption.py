@@ -6,6 +6,23 @@ import random
 txtPath = 'ImageEncryption/Text/'
 imgPath = 'ImageEncryption/Images/'
 
+def main():
+    image_name='earth.jpg'
+    newName = imgPath+('encrypt-'+image_name).replace('.jpg','.png') # jpg's dont work, so I convert everything to png
+    image_name = imgPath+image_name
+
+    type = 'd'
+
+    if type == 'e':
+
+        # Encrypt the text of the first Harry Potter novel
+        with open(txtPath+'Harry_Potter_1.txt', 'r') as file:
+            text = file.read()
+        encryptImage(image_name, text, newName)
+
+    else:
+        print(decryptImage(newName)[:2000]) # print the first 2000 charaters of the text
+
 # convert a char into its equivalent integer 
 def charToInt(char):
     return ord(char)-ord('0')
@@ -185,20 +202,4 @@ def decryptImage(image_name):
     return decryptPoly(ciphertext,keys)
 
 if __name__ == '__main__':
-
-    image_name='earth.jpg'
-    newName = imgPath+('encrypt-'+image_name).replace('.jpg','.png') # jpg's dont work, so I convert everything to png
-    image_name = imgPath+image_name
-
-    type = 'd'
-
-    if type == 'e':
-
-        # Encrypt the text of the first Harry Potter novel
-        with open(txtPath+'Harry_Potter_1.txt', 'r') as file:
-            text = file.read()
-        encryptImage(image_name, text, newName)
-
-    else:
-        print(decryptImage(newName)[:2000]) # print the first 2000 charaters of the text
-
+    main()
