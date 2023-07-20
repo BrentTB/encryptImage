@@ -2,16 +2,8 @@ import numpy as np
 from PIL import Image
 import random
 
-red = [255,0,0]
-green = [0,255,0]
-blue = [0,0,255]
-white = [255,255,255]
-black = [0,0,0]
-
 txtPath = 'ImageEncryption/Text/'
-pngPath = 'ImageEncryption/Images/'
-
-baseUse = 3 # make it that it can change how many pixels are used, the smaller, the closer to the origional but less text can be held
+imgPath = 'ImageEncryption/Images/'
 
 def charToInt(char):
     return ord(char)-ord('0')
@@ -174,22 +166,19 @@ def decryptImage(image_name):
 
 if __name__ == '__main__':
 
-    with open(txtPath+'Harry_Potter_1.txt', 'r') as file:
-    # Read in the contents of the file
-        text = file.read()
     image_name='earth.jpg'
+    newName = imgPath+('encrypt-'+image_name).replace('.jpg','.png') # jpg's dont work, so I convert everything to png
+    image_name = imgPath+image_name
 
-    # text='Hi'
-    # image_name = 'gradient.png'
+    type = 'e'
 
-    newName = pngPath+('encrypt-'+image_name).replace('.jpg','.png') # jpg's dont work, so I convert everything to png
-    image_name = pngPath+image_name
+    if type == 'e':
 
-    encryptImage(image_name, text, newName)
-    print(decryptImage(newName)[:200]) # print the first 200 charaters of the text
+        # Encrypt the text of the first Harry Potter novel
+        with open(txtPath+'Harry_Potter_1.txt', 'r') as file:
+            text = file.read()
+        encryptImage(image_name, text, newName)
 
+    else:
+        print(decryptImage(newName)[:2000]) # print the first 2000 charaters of the text
 
-    # digit 1:
-    # 0 -> randomly chosen. This could carry more info
-    # 1 -> 
-    # 2 -> this pixel is the end of message
